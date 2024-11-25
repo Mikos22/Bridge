@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontakt Formular</title>
+    <link rel="stylesheet" href="Formular.css">
+</head>
+
+<body>
+    <h2><b><i>Kontakt Formular</i></b></h2>
+    
+    <!-- Start of the form element -->
+    <form action="/submit" method="post">
+        <div>
+            <label for="Fornavn">Fornavn: (MAX 16 characters)</label>
+            <input type="text" name="Fornavn" id="Fornavn" pattern="\w{1,16}" required placeholder="Indsæt fornavn her"> <!-- pattern bliver brugt til at lave requirements. Vi skriver w når der skal være et interval man gerne ville give-->
+        </div>
+        <div>
+            <label for="Efternavn">Efternavn: (MAX 16 characters)</label>
+            <input type="text" name="Efternavn" id="Efternavn" pattern="\w{1,16}" required placeholder="Indsæt efternavn her">
+        </div>
+        <div>
+            <label for="Tel">Tel: (8 characters required)</label>
+            <input type="tel" name="Tel" id="Tel" pattern="\d{8}" required placeholder="Indsæt telefon nummer her"> <!-- "\d{8}"  er når vi præcis ville have 8 characters.-->
+        </div>
+
+        <div>
+            <label for="Email">Email: (Input valid email)</label>
+            <input type="email" name="Email" id="Email" required placeholder="Indsæt email her">
+        </div>
+
+        <div>
+            <label for="Besked">Besked: (MAX 512 characters)</label>
+            <textarea name="Besked" id="Besked" maxlength="512">TEXT ME PLS</textarea>
+        </div>
+
+        <!-- Submit button for the form -->
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+    <!-- End of the form element -->
+</body>
+
+</html>

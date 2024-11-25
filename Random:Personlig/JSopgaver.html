@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Game Organizer</title>
+    <style>
+        /* styles.css */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        .schedule-form, .scheduled-games {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f1f1f1;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Basketball Game Organizer</h1>
+        </header>
+
+        <section class="schedule-form">
+            <h2>Planlæg en Kamp</h2>
+            <form id="scheduleForm">
+                <input type="text" id="teamA" placeholder="Hold A" required>
+                <input type="text" id="teamB" placeholder="Hold B" required>
+                <input type="date" id="date" required>
+                <input type="time" id="time" required>
+                <button type="submit">Planlæg Kamp</button>
+            </form>
+        </section>
+
+        <section class="scheduled-games">
+            <h2>Planlagte Kampe</h2>
+            <ul id="gamesList">
+                <li>Hold A vs Hold B den 2024-10-25 kl. 18:00</li>
+                <li>Hold C vs Hold D den 2024-10-26 kl. 19:00</li>
+                <!-- Flere eksempler kan tilføjes her -->
+            </ul>
+        </section>
+    </div>
+</body>
+</html>

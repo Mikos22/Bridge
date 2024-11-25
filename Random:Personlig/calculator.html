@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <script type="text/javascript">
+            function calculate(){
+                let firstNumber = Number(document.getElementById('firstNumber').value)
+                let secondNumber = Number(document.getElementById('secondNumber').value)
+                //TODO 2: lav et if statement, der tjekker at brugeren har tastet et tal. Hvis de taster noget andet SÅ SLET DET! (Brug google)
+
+               if (isNaN(firstNumber) && isNaN(secondNumber)) {
+                return;
+               }
+               
+                //TODO 1: lav jeres beregning her og indsæt resultatet i variablen der hedder result!
+                let result = firstNumber * secondNumber; 
+
+                document.getElementById('result').innerHTML = result;
+            }
+        </script>
+    </head> 
+
+    <body>
+        <input id='firstNumber'/>
+        <p>*</p>
+        <input id='secondNumber'/>
+        <button onclick="calculate()">CALCULATE!</button>
+        <p id="result"></p>
+    </body>
+</html>

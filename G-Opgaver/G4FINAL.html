@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bi simulation</title>
+</head>
+<body>
+    <h1>Bi Simulation med 1 blomsterbed</h1>
+    <form id="simulationForm">
+        	<!-- OPGAVE -- Lav en form, hvor de relevante værdier kan afgives, husk validering af input -->
+        <label for="antalBier">Antal Bier:</label>
+        <input type="number" id="antalBier" name="antalBier" min="1" required>
+        <br>
+        <label for="SizeX">Eng Bredde (X, min 5):</label>
+        <input type="number" id="SizeX" name="SizeX" min="5" required>
+        <br>
+        <label for="SizeY">Eng Længde (Y, min 5):</label>
+        <input type="number" id="SizeY" name="SizeY" min="5" required>
+        <br><br>
+        <button id="Simulationstart" type="submit">Start Simulation</button>
+    </form>
+
+    <canvas id="beeCanvas" width="600" height="600" style="border: 1px solid black;"></canvas>
+
+    <div id="rundeCounter">Runde: 0</div>
+    <div id="blomstCounter">Blomster: 9</div>
+
+    <script>
+        // definere vores emoji kombinationer 
+const græs = "🌱🌱";
+const bi = "🐝🌱";
+const blomst = "🌱🌻";
+const blomstBi = "🐝🌻";
+
+// BlomsterEng klasse (Opgavekrav) 
+class BlomsterEng {
+    constructor(højde, bredde, antalBier) {
+        if (højde < 5 || bredde < 5) { // Opgavekrav at der mindst skal være 5x5 eng størrelse 
+            throw new Error("Eng skal mindst være 5x5");
+        }
+        this.højde = højde;
+        this.bredde = bredde;
+        this.myEng = this.opretEng();
+        this.antalBier = antalBier;
+        this.nuværendeBier = 0;
+        this.antalBlomster = 0;
+    }
+
+    opretEng() { // bruger array.from til at tage input og danne et array, i arrayet putter vi græs i felterne 
+        return Array.from({ length: this.højde }, () =>
+            Array.from({ length: this.bredde }, () => græs)
+        );
+    }
+
+    placerBlomsterBed() { // placere blomster i arrayet 
+        let højdeIndexBlomsterBed = Math.floor(Math.random() * (this.højde - 2));
+        let breddeIndexBlomsterBed = Math.floor(Math.random() * (this.bredde - 2));
+        // for at placere en 3x3 array, skal der mindst være 2 pladser ved enderne, derfor minusser vi 2 fra længden og højden 
+        // vi generer så også en tilfældig "øverst venstre" placering for en blomst, hvorefter vi fylder resten af engen 
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                this.myEng[højdeIndexBlomsterBed + i][breddeIndexBlomsterBed + j] = blomst;
+                this.antalBlomster++; // tæller antallet af blomster 
+            }
+        }
+    }
+
+    placerBier() { // efter blomst placering, er det nu tid til bier 
+        while (this.nuværendeBier < this.antalBier) { // placer bier indtil det ønsket antal er opnået 
+            let højdeIndexBi = Math.floor(Math.random() * this.højde);
+            let breddeIndexBi = Math.floor(Math.random() * this.bredde);
+
+            if (this.myEng[højdeIndexBi][breddeIndexBi] === græs) { // placer bierne de steder hvor der kun er græs 
+                this.myEng[højdeIndexBi][breddeIndexBi] = bi;
+                this.nuværendeBier++;
+            }
+        }
+    }
+
+    bevægeBier() {
+        // vi bevæger bier ved at fjerne alle bierne, derefter generer tilfældig position, og derefter placer dem igen 
+        for (let i = 0; i < this.højde; i++) {
+            for (let j = 0; j < this.bredde; j++) {
+                if (this.myEng[i][j] === bi || this.myEng[i][j] === blomstBi) {
+                    if (this.myEng[i][j] === blomstBi) {
+                        this.myEng[i][j] = græs;
+                        this.antalBlomster--; // hvis bien lander på blomst, juter antallet af blomster 
+                        this.nuværendeBier--;
+                    } else if (this.myEng[i][j] === bi) { // hvis ikke, så fjern bien 
+                        this.myEng[i][j] = græs;
+                        this.nuværendeBier--;
+                    }
+                }
+            }
+        }
+
+        while (this.nuværendeBier < this.antalBier) { // igen placer vi bier, indtil det ønskede antal er nået 
+            let højdeIndexBi = Math.floor(Math.random() * this.højde);
+            let breddeIndexBi = Math.floor(Math.random() * this.bredde);
+
+            if (this.myEng[højdeIndexBi][breddeIndexBi] === blomst) { // hvis den valgte bi position er bloms, bliver det til bi og blomst 
+                this.myEng[højdeIndexBi][breddeIndexBi] = blomstBi;
+                this.nuværendeBier++;
+            } else if (this.myEng[højdeIndexBi][breddeIndexBi] === græs) { // hvis det lander på græs, bliver det bi græs 
+                this.myEng[højdeIndexBi][breddeIndexBi] = bi;
+                this.nuværendeBier++;
+            }
+        }
+    }
+}
+
+class Simulation {
+    constructor(højde, bredde, blomsterbed, bier) {
+        this.højde = højde;
+        this.bredde = bredde;
+        this.blomsterbed = blomsterbed;
+        this.bier = bier;
+        this.eng = new BlomsterEng(højde, bredde, bier); // Eng oprettes i BlomsterEng klassen med opretEng() funktion 
+    }
+
+    run(callback) { // vi kører simulationen igennem run()
+        for (let i = 0; i < this.blomsterbed; i++) {
+            this.eng.placerBlomsterBed(); // placer 1 blomsterbed 
+        }
+        this.eng.placerBier(); // placere antal bier som brugeren har givet 
+
+        let antalRunder = 0; // rundetæller 
+        const interval = setInterval(() => { // vi kører koden indenfor setInterval med 500ms delay 
+            if (this.eng.antalBlomster === 0) {
+                clearInterval(interval); // stopper intervallet med at køre 
+                alert("Simulationen er færdig!"); // hvis ikke flere blomster, popup for færdig simulation 
+            } else { // så længe der er blomster tilbage 
+                this.eng.bevægeBier(); 
+                antalRunder++;
+                callback(this.eng.myEng, antalRunder, this.eng.antalBlomster);// vi bruger callback til at kalde på de opdaterede placeringer og runder 
+            }
+        }, 650); // længden af delay (ms)
+    }
+}
+
+// Canvas-visualisering
+function renderState(eng, antalRunder, antalBlomster) { // eng refere til this.eng.myEng i run metoden, altså vores array. 
+    const canvas = document.getElementById("beeCanvas"); // tager fat i canvas
+    const ctx = canvas.getContext("2d");
+    const cellSize = canvas.width / eng[0].length; // Beregner celle-størrelse baseret på gridets bredde (her eng)
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Vi sletter alle emojis på canvas, for så bagefter at tilføje dem igen. Det er hele canvas fordi vi tager den fra 0,0 til længden og bredden 
+
+    for (let y = 0; y < eng.length; y++) { // dobbelt forloop til at gennemgå arrayet og placere emojis 
+        for (let x = 0; x < eng[y].length; x++) {
+
+            // Tegn griddet op 
+            ctx.strokeStyle = "black"; // sorte streger 
+            ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize); // vi tegner en grid firkant på størrelsen cellSize, og hvergang x og y rykker, rykkes startpunktet for strokeRect også. Dermed tegner man hele engen. 
+
+            // Tegn emoji i cellen
+            let emoji = eng[y][x]; // hver punkt i vores array er givet ved emojis, og vi gemmer emojien for det punkt, for så at tegne det i html
+            ctx.font = `${cellSize * 0.3}px Arial`; // Justerer fontstørrelsen så emojien kan være i cellen 
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(emoji, // vi indtegner vores emojis i en celle og placere den i midten 
+            x * cellSize + cellSize / 2, // Midtpunkt af cellen (x) 
+            y * cellSize + cellSize / 2  // Midtpunkt af cellen (y)
+            );
+        }
+    }
+
+    // Opdater runde- og blomster-tællere
+    // Vigtigt at vi sætter `${x}` så værdien af variablen vises selv når den opdatere. 
+    document.getElementById("rundeCounter").textContent = `Runde: ${antalRunder}`;
+    document.getElementById("blomstCounter").textContent = `Blomster: ${antalBlomster}`;
+}
+
+// Form-eventhandler & hente bruger input 
+
+// Når brugeren trykker "submit" eller på start simulation knappen, ville siden reloade fordi der er en form der har modtaget data
+// Hvis siden opdatere ville de værdien brugeren har sat ind blive slettet, og dermed ville simulationen ikke starte 
+// Vi blokerer reloaded af siden med "preventDefault()"
+
+document.getElementById("simulationForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    // Gemmer værdier som brugeren giver 
+    // parseInt, fordi brugeren angiver et tal 
+    const antalBier = parseInt(document.getElementById("antalBier").value);
+    const bredde = parseInt(document.getElementById("SizeX").value);
+    const højde = parseInt(document.getElementById("SizeY").value);
+
+    // Vi bruger de værdier brugeren har givet, og der kan kun være 1 eng. 
+    const simulation = new Simulation(højde, bredde, 1, antalBier);
+    simulation.run(renderState);
+});
+
+        
+    </script>
+</body>
+</html>
